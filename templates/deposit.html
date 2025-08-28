@@ -5,18 +5,25 @@
   <title>Deposit</title>
 </head>
 <body>
-  <h2>Deposit Form</h2>
-  <form method="POST">
-    <label>User ID:</label><br>
-    <input type="text" name="user_id" required><br><br>
+  <h2>Deposit</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Username</label><br>
+    <input name="username" placeholder="@username" required><br><br>
 
-    <label>Amount ($):</label><br>
-    <input type="number" step="0.01" name="amount" required><br><br>
+    <label>Wallet</label><br>
+    <input name="wallet" placeholder="Wallet/UPI" required><br><br>
 
-    <label>Screenshot URL:</label><br>
-    <input type="text" name="screenshot" placeholder="Paste link"><br><br>
+    <label>Amount ($)</label><br>
+    <input type="number" name="amount" step="0.01" required><br><br>
+
+    <label>Txn ID</label><br>
+    <input name="txn_id" placeholder="Transaction reference"><br><br>
+
+    <label>Screenshot (optional)</label><br>
+    <input type="file" name="screenshot" accept="image/*"><br><br>
 
     <button type="submit">Submit Deposit</button>
   </form>
+  <p><a href="/">← Home</a></p>
 </body>
 </html>
