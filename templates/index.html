@@ -1,60 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BETWIN</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BetWin Trading Game</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<header class="appbar">
-  <div class="left">
-    <div class="logo">BW</div>
-    <div class="brand">
-      <div class="title">BETWIN</div>
-      <div class="sub">REAL CASH</div>
-    </div>
-  </div>
-  <div class="right">
-    <div class="wallet">
-      <div class="wallet-addr" id="walletAddr">0xYourWalletHereABC123</div>
-    </div>
-    <div class="balance-pill">Balance: $<span id="balance">0.00</span></div>
-    <button id="https://t.me/Betwin_deposit_bot" class="btn primary">Deposit</button>
-    <button id="openWithdraw" class="btn ghost">Withdraw</button>
-  </div>
-</header>
+  <div class="container">
 
-<main class="container">
-  <section class="card chart-card">
-    <div class="chart-top">
-      <div class="pair">BTC/USDT</div>
-      <div class="tags">
-        <span class="tag">20s Bet</span>
-        <span class="tag">5s Result</span>
-        <span class="tag live">Live</span>
-      </div>
-    </div>
-    <div class="chart-wrap">
+    <!-- Balance / Round / Timer -->
+    <header>
+      <div class="wallet">💰 Balance: $<span id="balance">0</span></div>
+      <div class="round">Round <span id="roundNumber">1</span></div>
+      <div class="timer">⏳ <span id="timer">20</span>s</div>
+    </header>
+
+    <!-- Chart -->
+    <div class="chart-box">
       <canvas id="priceChart"></canvas>
-      <div class="floating" id="floatingPrice">
-        <span id="priceArrow">▲</span> <span id="priceVal">$0.000</span>
-      </div>
-      <div class="round-info">
-        <div class="pill">Round <b id="roundNum">1</b></div>
-        <div class="pill">Phase <b id="phase">—</b></div>
-        <div class="pill">Timer <b id="timer">—s</b></div>
-        <div class="pill">Players <b id="players">—</b></div>
-      </div>
     </div>
 
+    <!-- Bet Controls -->
+    <div class="bet-controls">
+      <input type="number" id="betAmount" placeholder="Enter amount" min="1">
+      <button id="betUp" class="up">UP</button>
+      <button id="betDown" class="down">DOWN</button>
+    </div>
+
+    <!-- UP / DOWN lanes -->
     <div class="lanes">
       <div class="lane up">
         <div class="lane-head">UP</div>
         <div class="lane-total">$<span id="upTotal">0.00</span></div>
         <div class="bots-list" id="upBotsList"></div>
       </div>
+
       <div class="lane down">
         <div class="lane-head">DOWN</div>
         <div class="lane-total">$<span id="downTotal">0.00</span></div>
@@ -62,19 +44,13 @@
       </div>
     </div>
 
-    <div class="controls">
-      <input id="betAmount" type="number" min="0.1" step="0.1" placeholder="Amount ($)">
-      <button id="betUp" class="btn success">Bet UP</button>
-      <button id="betDown" class="btn danger">Bet DOWN</button>
+    <!-- Activity / History -->
+    <div class="activity">
+      <h3>📜 History</h3>
+      <div id="activity"></div>
     </div>
+  </div>
 
-    <div class="activity" id="activity">
-      <div class="hint">Recent activity will appear here…</div>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">© 2025 Market Battle — Demo</footer>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
