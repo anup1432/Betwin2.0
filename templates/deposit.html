@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Deposit — BETWIN</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+  <header class="appbar">
+    <div class="left">
+      <div class="logo">BW</div>
+      <div class="brand"><div class="title">BETWIN</div></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Deposit</h2>
+      <form action="/deposit" method="POST" enctype="multipart/form-data" class="form">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Your Telegram username or name" required>
+
+        <label>Wallet</label>
+        <select name="wallet" required>
+          {% for key, val in wallets.items() %}
+            <option value="{{key}}">{{key}}</option>
+          {% endfor %}
+        </select>
+
+        <label>Amount ($)</label>
+        <input type="number" name="amount" step="0.01" min="0.1" required>
+
+        <label>Transaction ID / Reference</label>
+        <input type="text" name="txn_id" required>
+
+        <label>Payment Screenshot</label>
+        <input type="file" name="screenshot" accept="image/*" required>
+
+        <button type="submit" class="btn primary">Submit Deposit</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">© 2025 Market Battle — Demo</footer>
+</body>
+</html>
