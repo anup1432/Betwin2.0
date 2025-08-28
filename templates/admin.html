@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<h1>Admin Dashboard</h1>
+<div class="section">
+    <h2>Pending Deposits</h2>
+    {% for deposit in deposits %}
+    <div class="deposit-card">
+        <p>User: {{deposit.user}}</p>
+        <p>Wallet: {{deposit.wallet}}</p>
+        <p>Amount: {{deposit.amount}}</p>
+        <p>TxnID: {{deposit.txn}}</p>
+        <img src="{{deposit.screenshot}}" width="200">
+        <button>Approve</button>
+        <button>Reject</button>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>
