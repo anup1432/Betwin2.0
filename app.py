@@ -1,97 +1,78 @@
-from flask import Flask, render_template, request, redirect
-import telebot, os
+from flask import Flask, render_template, request
+import requests, os
 from pymongo import MongoClient
+from datetime import datetime
 
 app = Flask(__name__)
 
-# ====== MongoDB Connection ======
-MONGO_URI = os.environ.get("MONGO_URI")
-client = MongoClient(MONGO_URI)
-db = client["betwin"]   # database name
-deposits_collection = db["deposits"]
-users_collection = db["users"]
+# 🔹 Telegram setup
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+CHANNEL_ID = "@YOUR_CHANNEL_USERNAME_OR_ID"
 
-# ====== Load Environment Variables ======
-DEPOSIT_TOKEN = os.environ.get("DEPOSIT_TOKEN")
-DEPOSIT_CHANNEL = os.environ.get("DEPOSIT_CHANNEL")
+def send_to_telegram(message):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    data = {"chat_id": CHANNEL_ID, "text": message, "parse_mode": "HTML"}
+    requests.post(url, data=data)
 
-WITHDRAW_TOKEN = os.environ.get("WITHDRAW_TOKEN")
-WITHDRAW_CHANNEL = os.environ.get("WITHDRAW_CHANNEL")
+# 🔹 MongoDB setup (tu apna MongoDB Atlas URL dal)
+MONGO_URL = os.environ.get("MONGO_URL", "YOUR_MONGO_ATLAS_URL")
+client = MongoClient(MONGO_URL)
+db = client["betwin_db"]
+deposits = db["deposits"]
+withdrawals = db["withdrawals"]
 
-NEWUSER_TOKEN = os.environ.get("NEWUSER_TOKEN")
-NEWUSER_CHANNEL = os.environ.get("NEWUSER_CHANNEL")
-
-# ====== Initialize Bots ======
-deposit_bot = telebot.TeleBot(DEPOSIT_TOKEN)
-withdraw_bot = telebot.TeleBot(WITHDRAW_TOKEN)
-newuser_bot = telebot.TeleBot(NEWUSER_TOKEN)
-
-# ====== Wallets ======
-wallets = {
-    "USDT": "TRC20/1234...",
-    "BTC": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-    "ETH": "0x1234567890abcdef1234567890abcdef12345678",
-    "BUSD": "0xabcdef1234567890abcdef1234567890abcdef12"
-}
-
-# ====== Routes ======
-
-# Home Page
 @app.route("/")
 def home():
-    return render_template("index.html", wallets=wallets)
+    return render_template("index.html")
 
-# Deposit submission
-@app.route("/deposit", methods=["POST"])
+@app.route("/deposit", methods=["GET", "POST"])
 def deposit():
-    user = request.form.get("username")
-    wallet = request.form.get("wallet")
-    amount = request.form.get("amount")
-    txn = request.form.get("txn_id")
-    screenshot = request.files.get("screenshot")
+    if request.method == "POST":
+        user_id = request.form["user_id"]
+        amount = request.form["amount"]
+        screenshot = request.form["screenshot"]
 
-    # Save screenshot temporarily
-    path = f"static/{screenshot.filename}"
-    screenshot.save(path)
+        # Save to DB
+        deposit_data = {
+            "user_id": user_id,
+            "amount": amount,
+            "screenshot": screenshot,
+            "status": "pending",
+            "timestamp": datetime.utcnow()
+        }
+        deposits.insert_one(deposit_data)
 
-    # Save deposit in MongoDB
-    deposits_collection.insert_one({
-        "user": user,
-        "wallet": wallet,
-        "amount": amount,
-        "txn": txn,
-        "screenshot": path,
-        "status": "pending"
-    })
+        # Send to Telegram
+        message = f"💰 <b>New Deposit Request</b>\n\n👤 User: {user_id}\n💵 Amount: ${amount}\n🖼 Screenshot: {screenshot}\n⏳ Status: Pending"
+        send_to_telegram(message)
 
-    # Send to Deposit Telegram channel
-    with open(path, "rb") as file:
-        deposit_bot.send_photo(
-            DEPOSIT_CHANNEL,
-            file,
-            caption=f"💰 Deposit Request\n👤 User: {user}\n💳 Wallet: {wallet}\n💵 Amount: {amount}\n🔗 TxnID: {txn}"
-        )
+        return "✅ Deposit request sent!"
+    return render_template("deposit.html")
 
-    return redirect("/?success=1")
-
-# Withdraw page
-@app.route("/withdraw")
+@app.route("/withdraw", methods=["GET", "POST"])
 def withdraw():
-    return render_template("withdraw.html", wallets=wallets)
+    if request.method == "POST":
+        user_id = request.form["user_id"]
+        amount = request.form["amount"]
+        wallet = request.form["wallet"]
 
-# New user notification
-@app.route("/newuser", methods=["POST"])
-def new_user():
-    user = request.form.get("username")
+        # Save to DB
+        withdraw_data = {
+            "user_id": user_id,
+            "amount": amount,
+            "wallet": wallet,
+            "status": "pending",
+            "timestamp": datetime.utcnow()
+        }
+        withdrawals.insert_one(withdraw_data)
 
-    # Save in MongoDB
-    users_collection.insert_one({"username": user})
+        # Send to Telegram
+        message = f"🏧 <b>New Withdraw Request</b>\n\n👤 User: {user_id}\n💵 Amount: ${amount}\n💳 Wallet: {wallet}\n⏳ Status: Pending"
+        send_to_telegram(message)
 
-    # Send Telegram notification
-    newuser_bot.send_message(NEWUSER_CHANNEL, f"🎉 New User Joined: {user}")
+        return "✅ Withdraw request sent!"
+    return render_template("withdraw.html")
 
-    return redirect("/?success=1")
-
-# ====== Run App ======
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
