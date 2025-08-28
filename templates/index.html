@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CWallet Game</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/script.js" defer></script>
+</head>
+<body>
+<h1>💰 CWallet Market Battle 💰</h1>
+
+<div class="section">
+    <h2>Deposit</h2>
+    <form action="/deposit" method="POST" enctype="multipart/form-data">
+        <input type="text" name="username" placeholder="Your Username" required>
+        <select name="wallet" required>
+            {% for key, val in wallets.items() %}
+            <option value="{{key}}">{{key}}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="amount" placeholder="Amount" required>
+        <input type="text" name="txn_id" placeholder="Transaction ID" required>
+        <input type="file" name="screenshot" accept="image/*" required>
+        <button type="submit">Submit Deposit</button>
+    </form>
+</div>
+
+<div class="section">
+    <h2>Withdraw</h2>
+    <a class="btn" href="/withdraw">Open Withdraw</a>
+</div>
+
+<div class="graph">
+    <canvas id="marketGraph"></canvas>
+</div>
+
+</body>
+</html>
