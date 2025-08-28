@@ -1,18 +1,22 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Withdraw</title>
+  <meta charset="utf-8">
+  <title>withdraw</title>
 </head>
 <body>
-  <h2>Withdraw Request</h2>
+  <h2>withdraw Form</h2>
   <form method="POST">
-    <label>Wallet Address:</label><br>
-    <input type="text" name="wallet" required><br><br>
+    <label>User ID:</label><br>
+    <input type="text" name="user_id" required><br><br>
 
-    <label>Amount:</label><br>
-    <input type="number" name="amount" step="0.01" required><br><br>
+    <label>Amount ($):</label><br>
+    <input type="text" step="0.01" name="wallet address" required><br><br>
 
-    <button type="submit">Submit Withdraw</button>
+    <label>Screenshot URL:</label><br>
+    <input type="text" name="screenshot" placeholder="Paste link"><br><br>
+
+    <button type="submit">Submit </button>
   </form>
 </body>
 </html>
